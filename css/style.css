@@ -1,0 +1,6 @@
+.buttons-list {
+    list-style-type: none;
+}
+.selected {
+    background-color: white;
+}
