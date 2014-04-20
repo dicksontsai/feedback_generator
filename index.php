@@ -19,15 +19,23 @@
  
 <div id="tabs">
   <ul>
-    <? for  ($i = 1; $i <= ITERATIONS; $i++) {
+    <? for  ($i = 0; $i <= ITERATIONS; $i++) {
+        if ($i == 0) {
+          echo "<li><a href='#tabs-$i'>Overall Comments</a></li>";
+        } else {
         echo "<li><a href='#tabs-$i'>Problem $i</a></li>";
+      }
     }
     ?>
   </ul>
-  <? for  ($i = 1; $i <= ITERATIONS; $i++) {
-        echo "<div id='tabs-$i'>
-                    <p>This is Problem $i</p>
-                    <button class='add-comment'>Add comment</button>
+  <? for  ($i = 0; $i <= ITERATIONS; $i++) {
+        echo "<div id='tabs-$i'>";
+        if ($i == 0) {
+          echo "<p>These are your overall comments</p>";
+        } else {
+          echo "<p>This is Problem $i</p>";
+        }
+        echo "<button class='add-comment'>Add comment</button>
                     <div class='add-comment-form' style='display: none'>
                         Comment: <textarea class='comment-input'></textarea><br>
                         Point value: <input class='point-value-input'>
