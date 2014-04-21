@@ -1,0 +1,207 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Stable Marriage Checker</title>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.0/jquery.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.3/jquery-ui.js"></script>
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.0/css/bootstrap.css">
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.0/js/bootstrap.js"></script>
+    <style>
+      .main td {
+        padding: 5px;
+      }
+      .sortable li {
+        cursor: pointer;
+        margin: 2px;
+        padding-left: 5px !important;
+        padding-right: 5px !important;
+        text-align: center;
+        background: #eee;
+      }
+      .fixed {
+        cursor: default !important;
+        background: #fff !important;
+      }
+      .status {
+        background: #fee;
+      }
+      .status.ok{
+        background: #efe;
+      }
+      .status.ok:after {
+        content: "OK";
+      }
+    </style>
+  </head>
+  <body>
+    <div class="status">
+      &nbsp;
+    </div>
+    <div>
+      <a class="btn btn-default" onclick="$('.fixed').removeClass('fixed')">Enable all</a>
+      <a class="btn btn-default" onclick="update(true);">Swap places</a>
+    </div>
+    <table class="main">
+      <tr>
+        <td>
+    <table class="table" style="width: 250px">
+      <thead>
+        <tr>
+          <th style="width:100px">Pokemon</th>
+          <th style="width:150px">Preferences</th>
+        </tr>
+      </thead>
+      <tbody id="pokemon">
+        <tr>
+          <th>A</th>
+          <td>
+            <ul class="list-inline sortable"><li class="fixed">2</li><li class="fixed">3</li><li class="fixed">1</li><li>4</li></ul>
+          </td>
+        </tr>
+        <tr>
+          <th>B</th>
+          <td>
+            <ul class="list-inline sortable"><li class="fixed">1</li><li class="fixed">3</li><li class="fixed">2</li><li>4</li></ul>
+          </td>
+        </tr>
+        <tr>
+          <th>C</th>
+          <td>
+            <ul class="list-inline sortable"><li class="fixed">3</li><li class="fixed">2</li><li class="fixed">1</li><li>4</li></ul>
+          </td>
+        </tr>
+        <tr>
+          <th>D</th>
+          <td>
+            <ul class="list-inline sortable"><li>1</li><li>2</li><li>3</li><li>4</li></ul>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    </td>
+    <td>
+    <table class="table" style="width: 250px">
+      <thead>
+        <tr>
+          <th style="width: 100px">Trainer</th>
+          <th style="width: 150px">Preferences</th>
+        </tr>
+      </thead>
+      <tbody id="trainer">
+        <tr>
+          <th>1</th>
+          <td>
+            <ul class="list-inline sortable"><li class="fixed">A</li><li class="fixed">B</li><li class="fixed">C</li><li>D</li></ul>
+          </td>
+        </tr>
+        <tr>
+          <th>2</th>
+          <td>
+            <ul class="list-inline sortable"><li class="fixed">C</li><li class="fixed">A</li><li class="fixed">B</li><li>D</li></ul>
+          </td>
+        </tr>
+        <tr>
+          <th>3</th>
+          <td>
+            <ul class="list-inline sortable"><li class="fixed">B</li><li class="fixed">C</li><li class="fixed">A</li><li>D</li></ul>
+          </td>
+        </tr>
+        <tr>
+          <th>4</th>
+          <td>
+            <ul class="list-inline sortable"><li>A</li><li>B</li><li>C</li><li>D</li></ul>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </td>
+  </tr>
+  <tr>
+    <td>
+      <ol id="log">
+      </ol>
+    </td>
+  </tr>
+</table>
+<script>
+function update(swapped){
+  function extract(table){
+    var ret={};
+    $("tr", table).each(function(_, elem){
+      var name = $("th", $(elem)).html();
+      var list = $("ul li", $(elem)).map(function(_, x){return $(x).html();});
+      ret[name] = list;
+    });
+    return ret;
+  }
+  var t=extract($("#trainer"));
+  var p=extract($("#pokemon"));
+  if (swapped){
+    var temp=t;
+    t=p;
+    p=temp;
+  }
+  var prop = {};
+  for (var trainer in t){
+    prop[trainer] = t[trainer][0];
+  }
+  function getIndex(l, item){
+    for (var i=0;i<l.length;++i)
+      if (l[i]==item)
+        return i;
+  }
+  function pref(pokemon, trainer){
+    return 4-getIndex(p[pokemon], trainer);
+  }
+  var gotRejected = {};
+  for (var trainer in t)
+    gotRejected[trainer]=false;
+  var ended=false;
+  function next(prop){
+    ended=true;
+    var ret = {};
+    for (var trainer in t){
+      var pokemon = prop[trainer];
+      var rejected=false;
+      for (var other_trainer in t)
+        if (other_trainer!=trainer && prop[other_trainer]==pokemon && pref(pokemon, other_trainer)>pref(pokemon, trainer))
+          rejected=true;
+      if (!rejected)
+        ret[trainer]=prop[trainer];
+      else{
+        gotRejected[trainer]=true;
+        ended=false;
+        ret[trainer]=t[trainer][getIndex(t[trainer], prop[trainer])+1];
+      }
+    }
+    return ret;
+  }
+  $("#log").html("");
+  $("#log").append($("<li></li>").text(JSON.stringify(prop)));
+  while(true){
+    prop=next(prop);
+    if (ended)
+      break;
+    $("#log").append($("<li></li>").text(JSON.stringify(prop)));
+  }
+  var good=true;
+  for (var trainer in t)
+    if (getIndex(t[trainer], prop[trainer])==0)
+      good=false;
+  if (good)
+    $(".status").addClass("ok");
+  else
+    $(".status").removeClass("ok");
+}
+$(document).ready(function(){
+  $(".sortable").sortable({
+    cancel: ".fixed",
+    update: function(){
+      update();
+    }
+  });
+  update();
+});
+</script>
+  </body>
+</html>

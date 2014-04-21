@@ -4,7 +4,7 @@ $(".add-comment").click(function() {
         form.show();
 });
 $(".cancel-new-comment").click(function() {
-    var form = $(this).parent().children(".add-comment-form");
+    var form = $(this).parent();
     form.hide();
 });
 
@@ -15,6 +15,7 @@ $(".new-comment").click(function() {
     form.hide();
     //alert(form.children(".comment-input").val());
     var new_list_item = $('<li/>');
+    new_list_item.addClass("buttons-list-item");
     var new_comment = $('<button/>');
     new_comment.text(form.children(".comment-input").val());
     new_comment.data('point_value', Number(form.children(".point-value-input").val() || 0));
@@ -59,7 +60,14 @@ $("#compile").click(function () {
 
 $("#grade-new").click(function() {
     $(".selected").each(function (index, value) {
-        $(this).removeClass("selected");
+        if (! $(this).hasClass("temporary")) {
+            $(this).removeClass("selected");
+        }
     });
+    $(".temporary").val("");
     $(".point-output").val(0);
+});
+
+$(function() {
+    $(".sortable").sortable();
 });

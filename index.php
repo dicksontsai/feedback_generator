@@ -42,7 +42,8 @@
                         <button class='cancel-new-comment'>Cancel</button>                        
                         <button class='new-comment'>Create Comment</button>
                     </div>
-                    <ul class='buttons-list' id='buttons-list-$i'></ul>
+                    <ul class='buttons-list sortable' id='buttons-list-$i'></ul>
+                    <textarea class='temporary selected'></textarea>
                     Total points for problem: <input class='point-output'  value='0'>
                     </div>";
     }

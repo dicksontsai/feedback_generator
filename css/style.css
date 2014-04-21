@@ -1,6 +1,18 @@
 .buttons-list {
     list-style-type: none;
 }
+
+.buttons-list-item {
+    padding-left: 1.5em;
+    margin-top: 5px;
+    background-color: gray;
+}
+
 .selected {
-    background-color: white;
+    background-color: lightblue;
+}
+
+#output {
+    width: 500px;
+    height: 200px;
 }
