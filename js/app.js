@@ -18,6 +18,7 @@ $(".new-comment").click(function() {
     new_list_item.addClass("buttons-list-item");
     var new_comment = $('<button/>');
     new_comment.text(form.children(".comment-input").val());
+    form.children(".comment-input").val("");
     new_comment.data('point_value', Number(form.children(".point-value-input").val() || 0));
     //console.log(new_comment.data('point_value'));
     new_comment.click(function () {
@@ -53,7 +54,9 @@ $(".new-comment").click(function() {
 $("#compile").click(function () {
     var feedback_string = [];
     $(".selected").each(function (index, value) {
-        feedback_string.push($(this).text());
+        if ($(this).text().length > 0) {
+            feedback_string.push($(this).text());
+        }
     });
     $("#output").val(feedback_string.join(", "));
 });
