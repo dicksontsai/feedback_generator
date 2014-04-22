@@ -58,6 +58,11 @@ $("#compile").click(function () {
             feedback_string.push($(this).text());
         }
     });
+    $(".temporary").each(function (index, value) {
+        if ($(this).val().length > 0) {
+            feedback_string.push($(this).val());
+        }
+    });
     $("#output").val(feedback_string.join(", "));
 });
 
