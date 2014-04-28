@@ -33,7 +33,7 @@
         if ($i == 0) {
           echo "<p>These are your overall comments</p>";
         } else {
-          echo "<p>This is Problem $i</p>";
+          echo "<p>Problem $i solution notes:</p><textarea class='solution-notes'></textarea><br>";
         }
         echo "<button class='add-comment'>Add comment</button>
                     <div class='add-comment-form' style='display: none'>
