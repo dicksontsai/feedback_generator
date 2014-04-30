@@ -1,3 +1,7 @@
+window.onbeforeunload = function() {
+    return "You do not want to close this";
+}
+
 $(".add-comment").click(function() {
         //alert("This button is clicked");
         var form = $(this).parent().children(".add-comment-form");
